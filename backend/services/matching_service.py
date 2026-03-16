@@ -10,11 +10,17 @@ load_dotenv()
 
 class MatchingService:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            base_url="https://api.deepseek.com/v1",
-        )
+        self._client = None
         self.model = "deepseek-chat"
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = OpenAI(
+                api_key=os.getenv("DEEPSEEK_API_KEY"),
+                base_url="https://api.deepseek.com/v1",
+            )
+        return self._client
 
     def match_job(self, job: Dict[str, Any], resume_summary: Dict[str, Any], preferences: Dict[str, Any]) -> Dict[str, Any]:
         """Score a single job against user resume and preferences. Returns score + reasons."""

@@ -10,11 +10,17 @@ load_dotenv()
 
 class ClaudeService:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            base_url="https://api.deepseek.com/v1",
-        )
+        self._client = None
         self.model = "deepseek-chat"
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = OpenAI(
+                api_key=os.getenv("DEEPSEEK_API_KEY"),
+                base_url="https://api.deepseek.com/v1",
+            )
+        return self._client
 
     def analyze_resume(self, text: str) -> dict:
         system_prompt = """你是一位资深 HR 顾问和简历评估专家。请仔细分析简历并返回结构化 JSON。

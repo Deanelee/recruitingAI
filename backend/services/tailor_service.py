@@ -10,11 +10,17 @@ load_dotenv()
 
 class TailorService:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            base_url="https://api.deepseek.com/v1",
-        )
+        self._client = None
         self.model = "deepseek-chat"
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = OpenAI(
+                api_key=os.getenv("DEEPSEEK_API_KEY"),
+                base_url="https://api.deepseek.com/v1",
+            )
+        return self._client
 
     def _call(self, prompt: str, max_tokens: int = 2000) -> str:
         response = self.client.chat.completions.create(
